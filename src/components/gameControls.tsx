@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { createGame, url } from "@/helpers/engine_calls";
+import { createGame } from "@/helpers/engine_calls";
 import { useChessContext } from "@/hooks/ChessContext";
 
 function GameControls({
@@ -33,19 +33,23 @@ function GameControls({
     gameIdRef.current = currentId;
     updateBitboardState(currentId);
 
-    socketRef.current = new WebSocket(
-      `${url.replace("http", "ws")}ws/${currentId}`
-    );
+    const url = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+    if (url) {
+      socketRef.current = new WebSocket(
+        `${url.replace("http", "ws")}ws/${currentId}`
+      );
+    }
 
     setGameMessage("New Game Started");
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     if (gameMessage.includes("Started") && !isUserWhite) {
-      setIsUserTurn(false)
-      setGameMessage("")
+      setIsUserTurn(false);
+      setGameMessage("");
     }
-  }, [gameMessage])
+  }, [gameMessage]);
 
   return (
     <div className="mb-6 w-2/5 rounded-lg bg-[#2a2a2a] p-6 shadow-lg">
